@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy #define o tipo do objeto
+metadata:
+  name: exemplo-policy #nome da policy
+  namespace: meu-namespace #namespace onde ela sera aplicada
+spec:
+  podSelector: #identifica os pods que serao alvo da policy
+    matchLabels:
+      app: minha-aplicacao
+  policyTypes: #define quais tipos de trafego a policy ira controlar
+    - Ingress
+    - Egress
+  ingress: #essa regra permite que pods com a label "role: frontend" se comuniquem com os pods do selector "app: minha-aplicacao" na porta TCP 80
+    - from:
+        - podSelector:
+            matchLabels:
+              role: frontend
+      ports:
+        - protocol: TCP
+          port: 80
+  egress: #essa regra permite que pods do selector "app: minha-aplicacao" possam enviar trafego para pods com a label "role: database" na porta TCP 5432
+    - to:
+        - podSelector:
+            matchLabels:
+              role: database
+      ports:
+        - protocol: TCP
+          port: 5432

@@ -1,0 +1,55 @@
+#so devem receber trafego de servicos que fazem parte do frontend
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: permitir-frontend-para-backend
+  namespace: producao
+spec:
+  podSelector:
+    matchLabels:
+      tier: backend
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+     - ipBlock:
+            cidr: 172.17.0.0/16
+            except:
+              - 172.17.1.0/24
+        - namespaceSelector:  # tem o "-" o que significa uma OR condition
+            matchLabels:
+              myspace: producao
+        - podSelector: # tem o "-" o que significa uma OR condition
+            matchLabels:
+              tier: frontend
+      ports:
+        - protocol: TCP
+          port: 8080
+---
+#so deve aceitar conexoes de servicos backend
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: permitir-backend-para-database
+  namespace: producao
+spec:
+  podSelector:
+    matchLabels:
+      role: database
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - ipBlock:
+            cidr: 172.17.0.0/16
+            except:
+              - 172.17.1.0/24
+          namespaceSelector: # nao tem o "-" o que significa uma AND condition
+            matchLabels:
+              myspace: producao
+          podSelector:  # nao tem o "-" o que significa uma AND condition
+            matchLabels:
+              tier: backend
+      ports:
+        - protocol: TCP
+          port: 5432
