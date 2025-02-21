@@ -1,0 +1,21 @@
+Exercício Fácil: Container "Hello World"
+Objetivo:
+Utilizar comandos básicos do Docker para puxar uma imagem, rodar um container e interagir com ele.
+
+Tarefas:
+
+Puxe a imagem oficial do Docker "hello-world".
+Execute um container a partir dessa imagem.
+Observe e interprete a mensagem de saída, verificando se o container funcionou corretamente.
+Liste os containers (ativos e inativos) e veja o status do container executado.
+
+```bash
+#puxar imagem do docker hub:
+docker pull hello-world
+
+#rodar container:
+docker run hello-world
+
+#listar containers ativos e inativos:
+docker ps -a
+```
